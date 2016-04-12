@@ -328,26 +328,28 @@ public class LuPhs4AppIntfImpl implements LuPhs4AppIntf {
 		PoDaDaGrda1 da1 = new PoDaDaGrda1();
 		PoDaDaGrda2 da2 = new PoDaDaGrda2();
  
-		da0.setCsrq(DateUtils.dateToLongDonly(DateUtils.parse(personInfo.getBirthday())));
-		da0.setCsrqstr(personInfo.getBirthday());
+		da0.setCsrq(DateUtils.dateToLongDonly(DateUtils.parse(personInfo.getBirthday()))); 
 		da0.setCzlx(personInfo.getResidestatuscd());
 		da0.setDah(personInfo.getResidentid());
 		da0.setEmpi(ConvertUtils.toLong(personInfo.getEmpi())); 
 		da0.setHjlb(personInfo.getResidecd());
-        //建档日期 需要确定
-		da0.setJdrq(DateUtils.dateToLong(new CommonIntfImpl().getDbDate(getDBAgent())));
-		da0.setJdrqstr(personInfo.getBuilddate());
+		da0.setJdrq(DateUtils.dateToLong(DateUtils.currentDate()));
+		//da0.setJdrqstr(personInfo.getBuilddate());
 		da0.setJdry(personInfo.getBuilder());
 		da0.setJdrymc(personInfo.getBuilder());
 		da0.setJdsq(personInfo.getBuildorg()); 
 		da0.setJtdaid(ConvertUtils.toLong(personInfo.getFamilyid()));
-
-
+        
+        //常住类型 
+        Long czlx=ConvertUtils.toLong(personInfo.getResidestatuscd());
+        if(czlx==2|| czlx==3|| czlx==4)
+               czlx--;
+        da0.setCzlx(czlx.toString());
+        
 		da0.setSbbh(personInfo.getCardid());
 		da0.setSbkh(personInfo.getCardid());
 		da0.setSfzh(personInfo.getPapernum());
-		da0.setSqbm(personInfo.getManageorg());
-		//状态固定为1
+		da0.setSqbm(personInfo.getManageorg()); 
 		da0.setState("1");
 		String xb=personInfo.getSexcd();
 		if(xb.equals("男"))
@@ -369,9 +371,11 @@ public class LuPhs4AppIntfImpl implements LuPhs4AppIntf {
 		da1.setEmpi(da0.getEmpi());
 		da1.setGzdw(personInfo.getWorkunit());
 		da1.setHjdz(personInfo.getRegdetail());
+		//婚姻状况  需要确定是否转换  
 		da1.setHyzk(personInfo.getMarriagecd());
+		//户主关系   需要确定是否转换
 		da1.setHzgx(personInfo.getRelation());
-		da1.setIsqy(ConvertUtils.toLong(personInfo.getSigncontract()));
+		
 		da1.setJtdz(personInfo.getRegdetail());
 		da1.setJtdz1(personInfo.getNowprovince());
 		da1.setJtdz2(personInfo.getNowcity());
@@ -387,10 +391,21 @@ public class LuPhs4AppIntfImpl implements LuPhs4AppIntf {
 		da1.setSqbm(personInfo.getManageorg());
 		da1.setXl(personInfo.getEducationcd());
 		da1.setXx(personInfo.getBloodcd());
-		// 需要修改
-		da1.setYlfd(null);
-
-
+        da1.setQyysmc(personInfo.getDutydoctor());
+        da1.setQyfs(2L);
+        da1.setIsqy(ConvertUtils.toLong(personInfo.getSigncontract(),1L));
+        //da1.setIsqy(1L);
+        da1.setQysqbm(personInfo.getManageorg());
+		//需要确定是: 字符列表中顺序和文档中的不一样，还有就是有的名称不一样。例如：公费医疗
+       String fd = personInfo.getInsurancecd();
+        for (int k=0;k<  YlfdNames.length; k++){
+        	if (YlfdNames[k].equalsIgnoreCase( fd)){
+        		da1.setYlfd(Long.valueOf(k));
+        		break;
+        	}        		
+        }
+		
+        
 		da2.setEmpi(da0.getEmpi());
 		da2.setSg(ConvertUtils.toDouble(personInfo.getHeight()));
 		da2.setTw(ConvertUtils.toDouble(personInfo.getHip()));
