@@ -405,7 +405,6 @@ public class LuPhs4AppIntfImpl implements LuPhs4AppIntf {
         	}        		
         }
 		
-        
 		da2.setEmpi(da0.getEmpi());
 		da2.setSg(ConvertUtils.toDouble(personInfo.getHeight()));
 		da2.setTw(ConvertUtils.toDouble(personInfo.getHip()));
